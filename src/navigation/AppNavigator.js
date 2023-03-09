@@ -13,6 +13,8 @@ import SecondScreen from "../screens/SecondScreen";
 import Instructors from "../screens/Instructors";
 import Profile from "../screens/Profile";
 import Login from "../screens/Login";
+import LoginScreen from "../screens/LoginScreen";
+import SignupScreen from "../screens/SignupScreen";
 
 const MainStack = createNativeStackNavigator();
 const Main = () => {
@@ -22,8 +24,11 @@ const Main = () => {
         headerShown: false,
       }}
     >
-      <MainStack.Screen name="MainTabs" component={MainTabs} />
+      <MainStack.Screen name="LoginScreen" component={LoginScreen} />
+      <MainStack.Screen name="SignupScreen" component={SignupScreen} />
       <MainStack.Screen name="Login" component={Login} />
+      <MainStack.Screen name="MainTabs" component={MainTabs} />
+
       <MainStack.Screen name="SecondScreen" component={SecondScreen} />
     </MainStack.Navigator>
   );
