@@ -18,14 +18,14 @@ import {
 
 export default function ({ navigation }) {
   const { isDarkmode, setTheme } = useTheme();
-  const auth = getAuth();
+  // const auth = getAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function login() {
     setLoading(true);
-    await signInWithEmailAndPassword(auth, email, password).catch(function (
+    await signInWithEmailAndPassword( email, password).catch(function (
       error
     ) {
       // Handle Errors here.
