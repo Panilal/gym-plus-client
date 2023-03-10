@@ -11,6 +11,7 @@ import {
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
+import Login from "./Login";
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -41,11 +42,14 @@ const LoginScreen = () => {
           password,
         }
       );
-
-      const { token } = response.data;
-      await AsyncStorage.setItem("token", token);
-      console.log("Successfully logged in!");
-      navigation.navigate("Home");
+      if (LoginRequest.data === true) {
+       
+        console.log("Successfully logged in!");
+        navigation.navigate("MainTabs");
+      }
+      else{
+        alert("User doesnt Exist")
+      }
     } catch (error) {
       setErrorMessage("Login Failed");
     }

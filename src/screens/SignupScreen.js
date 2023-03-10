@@ -127,10 +127,10 @@ const SignupScreen = () => {
         confirmPassword,
       });
         console.log(response)
-      const { token, user } = response.data;
-      await AsyncStorage.setItem("token", token);
-      await AsyncStorage.setItem("user", JSON.stringify(user));
-      navigation.navigate("Login");
+      // const { token, user } = response.data;
+      // await AsyncStorage.setItem("token", token);
+      // await AsyncStorage.setItem("user", JSON.stringify(user));
+      navigation.navigate("LoginScreen");
       console.log("Successfully signed up!");
       Alert.alert("Signup Sucess");
     } catch (error) {
@@ -282,7 +282,7 @@ const styles = StyleSheet.create({
   },
   ovalContainer: {
     width: "90%",
-    height: "70%",
+    height: "50%",
     backgroundColor: "#f2f2f2",
     borderRadius: 20,
     alignItems: "center",

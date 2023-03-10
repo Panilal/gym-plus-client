@@ -2,7 +2,7 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Dropdown } from 'react-native-material-dropdown-v2-fixed';
+import { Dropdown } from "react-native-material-dropdown-v2-fixed";
 
 import { themeColor, useTheme } from "react-native-rapi-ui";
 import TabBarIcon from "../components/utils/TabBarIcon";
@@ -60,7 +60,7 @@ const MainTabs = () => {
           ),
         }}
       />
-      
+
       <Tabs.Screen
         name="Instructors"
         component={Instructors}
@@ -85,7 +85,6 @@ const MainTabs = () => {
           ),
         }}
       />
-      
     </Tabs.Navigator>
   );
 };
