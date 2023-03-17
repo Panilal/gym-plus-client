@@ -1,4 +1,15 @@
 import React from "react";
+import { useNavigation } from "@react-navigation/native";
+import { Alert } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -12,93 +23,97 @@ import Home from "../screens/Home";
 import Biometrics from "../screens/Biometrics";
 import SecondScreen from "../screens/SecondScreen";
 import Instructors from "../screens/Instructors";
-import Profile from "../screens/Profile";
+import ProfileScreen from "../screens/ProfileScreen";
 import Login from "../screens/Login";
 import LoginScreen from "../screens/LoginScreen";
 import SignupScreen from "../screens/SignupScreen";
 
 const MainStack = createNativeStackNavigator();
+
 const Main = () => {
   return (
-    <MainStack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <MainStack.Screen name="LoginScreen" component={LoginScreen} />
+    <MainStack.Navigator screenOptions={{ headerShown: false }}>
+      <MainStack.Screen name="MainTabs" component={MainTabs} />
+      <MainStack.Screen
+        name="LoginScreen"
+        component={LoginScreen}
+        options={{
+          gestureEnabled: false,
+          gestureDirection: "horizontal",
+        }}
+      />
+
       <MainStack.Screen name="SignupScreen" component={SignupScreen} />
       <MainStack.Screen name="Login" component={Login} />
-      <MainStack.Screen name="MainTabs" component={MainTabs} />
-
       <MainStack.Screen name="SecondScreen" component={SecondScreen} />
     </MainStack.Navigator>
   );
 };
 
 const Tabs = createBottomTabNavigator();
+
 const MainTabs = () => {
+  const navigation = useNavigation();
   const { isDarkmode } = useTheme();
+
+
+  const handleLogout = () => {
+    Alert.alert("Logout", "Are you sure you want to logout?", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "OK",
+        onPress: () => {
+          navigation.navigate("LoginScreen");
+        },
+      },
+    ]);
+  };
+
   return (
     <Tabs.Navigator
-      screenOptions={{
-        headerShown: false,
-        tabBarStyle: {
-          borderTopColor: isDarkmode ? themeColor.dark100 : "#c0c0c0",
-          backgroundColor: isDarkmode ? themeColor.dark200 : "#ffffff",
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+
+          if (route.name === "Home") {
+            iconName = focused ? "home" : "home-outline";
+          } else if (route.name === "ProfileScreen") {
+            iconName = focused ? "person" : "person";
+          } else if (route.name === "Biometrics") {
+            iconName = focused ? "finger-print" : "finger-print-outline";
+          } else if (route.name === "Instructors") {
+            iconName = focused ? "people" : "people-outline";
+          } else if (route.name === "Logout") {
+            iconName = focused ? "log-out" : "log-out-outline";
+          }
+
+          return <TabBarIcon name={iconName} size={size} color={color} />;
         },
-      }}
+        tabBarButton: (props) => {
+          return (
+            <TouchableOpacity
+              {...props}
+              onPress={() => {
+                if (route.name === "Logout") {
+                  handleLogout(props.navigation);
+                } else {
+                  props.onPress();
+                }
+              }}
+            />
+          );
+        },
+      })}
     >
-      {/* these icons using Ionicons */}
-      <Tabs.Screen
-        name="Home"
-        component={Home}
-        options={{
-          tabBarLabel: ({ focused }) => (
-            <TabBarText focused={focused} title="Home" />
-          ),
-          tabBarIcon: ({ focused }) => (
-            <TabBarIcon focused={focused} icon={"md-home"} />
-          ),
-        }}
-      />
+      <Tabs.Screen name="Home" component={Home} />
+      <Tabs.Screen name="Instructors" component={Instructors} />
+      <Tabs.Screen name="Biometrics" component={Biometrics} />
+      <Tabs.Screen name="ProfileScreen" component={ProfileScreen} />
 
-      <Tabs.Screen
-        name="Instructors"
-        component={Instructors}
-        options={{
-          tabBarLabel: ({ focused }) => (
-            <TabBarText focused={focused} title="Instructors" />
-          ),
-          tabBarIcon: ({ focused }) => (
-            <TabBarIcon focused={focused} icon={"male-female"} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="Biometrics"
-        component={Biometrics}
-        options={{
-          tabBarLabel: ({ focused }) => (
-            <TabBarText focused={focused} title="Biometrics" />
-          ),
-          tabBarIcon: ({ focused }) => (
-            <TabBarIcon focused={focused} icon={"finger-print"} />
-          ),
-        }}
-      />
-
-      <Tabs.Screen
-        name="Profile"
-        component={Profile}
-        options={{
-          tabBarLabel: ({ focused }) => (
-            <TabBarText focused={focused} title="Profile" />
-          ),
-          tabBarIcon: ({ focused }) => (
-            <TabBarIcon focused={focused} icon={"person"} />
-          ),
-        }}
-      />
+      <Tabs.Screen name="Logout" component={LoginScreen} />
     </Tabs.Navigator>
   );
 };
