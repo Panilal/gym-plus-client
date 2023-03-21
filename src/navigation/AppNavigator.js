@@ -10,10 +10,10 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
+import { useRoute } from "@react-navigation/native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Dropdown } from "react-native-material-dropdown-v2-fixed";
 
 import { themeColor, useTheme } from "react-native-rapi-ui";
 import TabBarIcon from "../components/utils/TabBarIcon";
@@ -21,10 +21,10 @@ import TabBarText from "../components/utils/TabBarText";
 
 import Home from "../screens/Home";
 import Biometrics from "../screens/Biometrics";
-import SecondScreen from "../screens/SecondScreen";
+
 import Instructors from "../screens/Instructors";
 import ProfileScreen from "../screens/ProfileScreen";
-import Login from "../screens/Login";
+
 import LoginScreen from "../screens/LoginScreen";
 import SignupScreen from "../screens/SignupScreen";
 
@@ -32,20 +32,13 @@ const MainStack = createNativeStackNavigator();
 
 const Main = () => {
   return (
-    <MainStack.Navigator screenOptions={{ headerShown: false }}>
-      <MainStack.Screen name="MainTabs" component={MainTabs} />
-      <MainStack.Screen
-        name="LoginScreen"
-        component={LoginScreen}
-        options={{
+    <MainStack.Navigator screenOptions={{ headerShown: false,
           gestureEnabled: false,
           gestureDirection: "horizontal",
-        }}
-      />
-
+        }}>
+      <MainStack.Screen name="LoginScreen" component={LoginScreen}/>
+      <MainStack.Screen name="MainTabs" component={MainTabs} />
       <MainStack.Screen name="SignupScreen" component={SignupScreen} />
-      <MainStack.Screen name="Login" component={Login} />
-      <MainStack.Screen name="SecondScreen" component={SecondScreen} />
     </MainStack.Navigator>
   );
 };
@@ -53,9 +46,11 @@ const Main = () => {
 const Tabs = createBottomTabNavigator();
 
 const MainTabs = () => {
+  const route = useRoute();
+  const email = route.params?.email;
+
   const navigation = useNavigation();
   const { isDarkmode } = useTheme();
-
 
   const handleLogout = () => {
     Alert.alert("Logout", "Are you sure you want to logout?", [
@@ -108,10 +103,18 @@ const MainTabs = () => {
         },
       })}
     >
-      <Tabs.Screen name="Home" component={Home} />
+      <Tabs.Screen name="Home" component={Home} initialParams={{ email }} />
       <Tabs.Screen name="Instructors" component={Instructors} />
-      <Tabs.Screen name="Biometrics" component={Biometrics} />
-      <Tabs.Screen name="ProfileScreen" component={ProfileScreen} />
+      <Tabs.Screen
+        name="Biometrics"
+        component={Biometrics}
+        initialParams={{ email }}
+      />
+      <Tabs.Screen
+        name="ProfileScreen"
+        component={ProfileScreen}
+        initialParams={{ email }}
+      />
 
       <Tabs.Screen name="Logout" component={LoginScreen} />
     </Tabs.Navigator>

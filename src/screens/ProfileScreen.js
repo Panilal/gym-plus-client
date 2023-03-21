@@ -11,6 +11,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { ScrollView } from "react-native";
+import { useRoute } from "@react-navigation/native";
 
 const ProfileScreen = () => {
   const navigation = useNavigation();

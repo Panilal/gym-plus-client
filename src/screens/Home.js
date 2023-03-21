@@ -10,8 +10,17 @@ import {
   TouchableOpacity,
   Layout,
 } from "react-native";
+import { useRoute } from "@react-navigation/native";
+
+
+
+
+
 
 export default function ({ navigation }) {
+    const route = useRoute();
+    const email = route.params?.email;
+
   // const { isDarkmode, setTheme } = useTheme();
   return (
     <View style={styles.container}>
@@ -22,7 +31,7 @@ export default function ({ navigation }) {
         />
       </View>
 
-      <Text style={styles.logo}>Welcome to GYM+</Text>
+      <Text style={styles.logo}>Welcome to GYM+ {email}</Text>
     </View>
   );
 }
