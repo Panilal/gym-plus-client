@@ -11,7 +11,6 @@ import {
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
-import Login from "./Login";
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -45,7 +44,8 @@ const LoginScreen = () => {
       if (LoginRequest.data === true) {
        
         console.log("Successfully logged in!");
-        navigation.navigate("MainTabs");
+        navigation.navigate("MainTabs", { email });
+        
       }
       else{
         alert("User doesnt Exist")
