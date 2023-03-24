@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -15,16 +15,13 @@ import { useRoute } from "@react-navigation/native";
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
+  const route = useRoute();
+  const emailSignUser = route.params?.email;
+
   const [firstName, setFirstName] = useState("");
   const [FirstNameError, setFirstNameError] = useState("");
   const [lastName, setLastName] = useState("");
   const [LastNameError, setLastNameError] = useState("");
-  const [street, setStreet] = useState("");
-  const [StreetError, setStreetError] = useState("");
-  const [city, setCity] = useState("");
-  const [CityError, setCityError] = useState("");
-  const [province, setProvince] = useState("");
-  const [ProvinceError, setProvinceError] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [PhoneNumberError, setPhoneNumberError] = useState("");
   const [email, setEmail] = useState("");
@@ -34,10 +31,31 @@ const ProfileScreen = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [ConfirmPasswordError, setConfirmPasswordError] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [userId, setuserId] = useState("");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `http://192.168.0.43:3000/account/${emailSignUser}`
+        );
+
+        setFirstName(response.data[0].firstName);
+        setLastName(response.data[0].lastName);
+        setPhoneNumber(response.data[0].phoneNumber);
+        setEmail(response.data[0].email);
+        setPassword(response.data[0].password);
+        setConfirmPassword(response.data[0].password);
+        setuserId(response.data[0].userId);
+      } catch (error) {
+        console.log("Failed to Update:", error.message);
+      }
+    };
+
+    fetchData();
+  }, [emailSignUser]);
 
   const handleUpdate = async () => {
-    // validate inputs
-
     if (!firstName) {
       setFirstNameError("First name is required");
       return;
@@ -97,32 +115,45 @@ const ProfileScreen = () => {
       return;
     }
 
-    try {
-      const response = await axios.post("http://192.168.0.43:3000/account", {
-        firstName,
-        lastName,
-        phoneNumber,
-        email,
-        password,
-        confirmPassword,
-      });
-      console.log(response);
-      // const { token, user } = response.data;
-      // await AsyncStorage.setItem("token", token);
-      // await AsyncStorage.setItem("user", JSON.stringify(user));
-      navigation.navigate("LoginScreen");
-      console.log("Successfully signed up!");
-      Alert.alert("Signup Sucess");
-    } catch (error) {
-      console.log("Failed to Update:", error.message);
-      if (
-        error.response &&
-        error.response.status === 409 &&
-        error.response.data.message === "Email already exists"
-      ) {
-        Alert.alert("Email already exists./n Please use a different email.");
+  Alert.alert("Update Profile", "Are you sure you want to update your profile?", [
+  {
+    text: "No",
+    onPress: async () => {
+      try {
+        const response = await axios.get(
+          `http://192.168.0.43:3000/account/${emailSignUser}`
+        );
+        setFirstName(response.data[0].firstName);
+        setLastName(response.data[0].lastName);
+        setPhoneNumber(response.data[0].phoneNumber);
+        setEmail(response.data[0].email);
+        setPassword(response.data[0].password);
+        setConfirmPassword(response.data[0].password);
+      } catch (error) {
+        console.log("Failed to fetch profile:", error.message);
       }
-    }
+    },
+    style: "cancel",
+  },
+  {
+    text: "Yes",
+    onPress: async () => {
+      try {
+        const response = await axios.put("http://192.168.0.43:3000/account", {
+          firstName,
+          lastName,
+          phoneNumber,
+          email,
+          password,
+          userId,
+        });
+        Alert.alert("Profile updated");
+      } catch (error) {
+        console.log("Failed to Update:", error.message);
+      }
+    },
+  },
+]);
   };
 
   return (
@@ -136,6 +167,7 @@ const ProfileScreen = () => {
               style={styles.inputText}
               placeholderTextColor="#003f5c"
               onChangeText={(text) => setFirstName(text)}
+              value={firstName}
             />
           </View>
           {FirstNameError ? (
@@ -148,48 +180,19 @@ const ProfileScreen = () => {
               style={styles.inputText}
               placeholderTextColor="#003f5c"
               onChangeText={(text) => setLastName(text)}
+              value={lastName}
             />
           </View>
           {LastNameError ? (
             <Text style={styles.errorText}>{LastNameError}</Text>
           ) : null}
-          {/* <View style={styles.inputView}>
-            <Text style={styles.labelText}>Street:*</Text>
-            <TextInput
-              style={styles.inputText}
-              placeholderTextColor="#003f5c"
-              onChangeText={(text) => setStreet(text)}
-            />
-          </View>
-          {StreetError ? (
-            <Text style={styles.errorText}>{StreetError}</Text>
-          ) : null}
-          <View style={styles.inputView}>
-            <Text style={styles.labelText}>City:*</Text>
-            <TextInput
-              style={styles.inputText}
-              placeholderTextColor="#003f5c"
-              onChangeText={(text) => setCity(text)}
-            />
-          </View>
-          {CityError ? <Text style={styles.errorText}>{CityError}</Text> : null}
-          <View style={styles.inputView}>
-            <Text style={styles.labelText}>Province:*</Text>
-            <TextInput
-              style={styles.inputText}
-              placeholderTextColor="#003f5c"
-              onChangeText={(text) => setProvince(text)}
-            />
-          </View>
-          {ProvinceError ? (
-            <Text style={styles.errorText}>{ProvinceError}</Text>
-          ) : null} */}
           <View style={styles.inputView}>
             <Text style={styles.labelText}>Phone Number:</Text>
             <TextInput
               style={styles.inputText}
               placeholderTextColor="#003f"
               onChangeText={(text) => setPhoneNumber(text)}
+              value={phoneNumber}
             />
           </View>
           {PhoneNumberError ? (
@@ -198,9 +201,11 @@ const ProfileScreen = () => {
           <View style={styles.inputView}>
             <Text style={styles.labelText}>Email:</Text>
             <TextInput
-              style={styles.inputText}
+              style={[styles.inputText, { backgroundColor: "#f2f2f2" }]}
               placeholderTextColor="#003f5c"
               onChangeText={(text) => setEmail(text)}
+              value={email}
+              editable={false}
             />
           </View>
           {EmailError ? (
@@ -213,6 +218,7 @@ const ProfileScreen = () => {
               placeholderTextColor="#003f5c"
               secureTextEntry={true}
               onChangeText={(text) => setPassword(text)}
+              value={password}
             />
           </View>
           {PasswordError ? (
@@ -225,6 +231,7 @@ const ProfileScreen = () => {
               placeholderTextColor="#003f5c"
               secureTextEntry={true}
               onChangeText={(text) => setConfirmPassword(text)}
+              value={confirmPassword}
             />
           </View>
           {ConfirmPasswordError ? (

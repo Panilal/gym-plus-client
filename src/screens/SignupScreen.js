@@ -124,7 +124,6 @@ const SignupScreen = () => {
         phoneNumber,
         email,
         password,
-        confirmPassword,
       });
         console.log(response)
       // const { token, user } = response.data;
